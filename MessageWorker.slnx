@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="MessageWorker.Application/MessageWorker.Application.csproj" />
+  <Project Path="MessageWorker.Domain/MessageWorker.Domain.csproj" />
+  <Project Path="MessageWorker.Infrastructure/MessageWorker.Infrastructure.csproj" />
+  <Project Path="MessageWorker/MessageWorker.csproj" />
+</Solution>
