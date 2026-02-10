@@ -14,4 +14,9 @@
   <ItemGroup>
     <Folder Include="Workers\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MessageWorker.Application\MessageWorker.Application.csproj" />
+    <ProjectReference Include="..\MessageWorker.Infrastructure\MessageWorker.Infrastructure.csproj" />
+  </ItemGroup>
 </Project>
