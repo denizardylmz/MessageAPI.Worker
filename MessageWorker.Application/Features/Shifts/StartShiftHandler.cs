@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MessageWorker.Application.Features.Shifts
 {
-    public class StartShiftHandler
+    public class StartShiftHandler : IEventHandler<ShiftCommand>
     {
         private readonly IShiftRepository _repository;
 
@@ -15,7 +15,7 @@ namespace MessageWorker.Application.Features.Shifts
             _repository = repository;
         }
 
-        public async Task Handle(ShiftCommand cmd, CancellationToken ct)
+        public async Task HandleAsync(ShiftCommand cmd, CancellationToken ct)
         {
             var existingShift = await _repository.GetActiveShiftAsync(cmd.telegramUserId, ct);
 
@@ -25,6 +25,27 @@ namespace MessageWorker.Application.Features.Shifts
             var shift = new Shift(cmd.telegramUserId, cmd.date);
 
             await _repository.AddAsync(shift, ct);
+        }
+    }
+
+    public class EndShiftHandler : IEventHandler<ShiftCommand>
+    {
+        private readonly IShiftRepository _repository;
+
+        public EndShiftHandler(IShiftRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task HandleAsync(ShiftCommand cmd, CancellationToken ct)
+        {
+            var shift = await _repository.GetActiveShiftAsync(cmd.telegramUserId, ct);
+
+            if (shift == null)
+                throw new Exception("No shift-on");
+            
+            shift.End(cmd.date);
+            await _repository.UpdateAsync(shift.Id, shift, ct);
         }
     }
 

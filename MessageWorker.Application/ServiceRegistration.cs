@@ -14,7 +14,9 @@ namespace MessageWorker.Application
             this IServiceCollection services,
             IConfiguration configuration)
         {
-        services.AddScoped<StartShiftHandler>();
+            services.AddScoped<StartShiftHandler>();
+
+            services.AddScoped<EndShiftHandler>();
 
             return services;
         }

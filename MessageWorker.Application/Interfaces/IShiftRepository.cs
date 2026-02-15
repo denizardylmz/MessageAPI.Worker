@@ -8,6 +8,7 @@ namespace MessageWorker.Application.Interfaces
     public interface IShiftRepository
     {
         Task AddAsync(Shift shift, CancellationToken ct);
+        Task UpdateAsync(Guid Id, Shift shift, CancellationToken ct);
         Task<Shift?> GetActiveShiftAsync(long userId, CancellationToken ct);
     }
 

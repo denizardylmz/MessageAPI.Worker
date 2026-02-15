@@ -20,7 +20,7 @@ namespace MessageWorker.Infrastructure.Messaging
             _settings = options.Value;
         }
 
-        public async Task StartAsync(Func<string, Task> onMessage)
+        public async Task StartAsync(Func<string, string, Task> onMessage)
         {
             var connection = await _provider.GetConnectionAsync();
             var channel = await connection.CreateChannelAsync();
@@ -33,17 +33,18 @@ namespace MessageWorker.Infrastructure.Messaging
 
             consumer.ReceivedAsync += async (sender, ea) =>
             {
+                var routingKey = ea.RoutingKey;
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body);
 
                 try
                 {
-                    await onMessage(message);
+                    await onMessage(message, routingKey);
                     await channel.BasicAckAsync(ea.DeliveryTag, false);
                 }
                 catch
                 {
-                    await channel.BasicNackAsync(ea.DeliveryTag, false, true);
+                    await channel.BasicNackAsync(ea.DeliveryTag, false, false);
                 }
             };
 
@@ -54,6 +55,4 @@ namespace MessageWorker.Infrastructure.Messaging
         }
 
     }
-
-
 }

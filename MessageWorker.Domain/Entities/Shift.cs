@@ -13,12 +13,18 @@ namespace MessageWorker.Domain.Entities
 
         private Shift() { }
 
-        public Shift(long userId, DateTime startTime)
+        public Shift(long userId, DateTime startTime) : this(Guid.NewGuid(), userId, startTime)
         {
-            Id = Guid.NewGuid();
+        }
+    
+        public Shift(Guid Id, long userId, DateTime startTime)
+        {
+            this.Id = Id;
             UserId = userId;
             StartTime = startTime;
         }
+
+
 
         public void End(DateTime endTime)
         {
