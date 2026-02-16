@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="MessageWorker.Abstractions/MessageWorker.Abstractions.csproj" Id="5a2e54a1-89ae-4a0c-9521-916aaf7a054f" />
   <Project Path="MessageWorker.Application/MessageWorker.Application.csproj" />
   <Project Path="MessageWorker.Domain/MessageWorker.Domain.csproj" />
   <Project Path="MessageWorker.Infrastructure/MessageWorker.Infrastructure.csproj" />

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MessageWorker.Abstractions\MessageWorker.Abstractions.csproj" />
     <ProjectReference Include="..\MessageWorker.Application\MessageWorker.Application.csproj" />
     <ProjectReference Include="..\MessageWorker.Domain\MessageWorker.Domain.csproj" />
   </ItemGroup>

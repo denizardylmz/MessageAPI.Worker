@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace MessageWorker.Infrastructure.Persistence.Repositories
 {
@@ -49,6 +50,21 @@ namespace MessageWorker.Infrastructure.Persistence.Repositories
             shiftEntity.EndTime = shift.EndTime;
 
             _context.Shifts.Update(shiftEntity);
+
+
+            var events = shift.DomainEvents.ToList();
+            foreach (var ev in events)
+            {
+                _context.OutboxMessages.Add(new OutboxMessage
+                {
+                    OccurredOnUtc = ev.OccurredOnUtc,
+                    Type = ev.GetType().Name,
+                    Payload = JsonDocument.Parse(JsonSerializer.Serialize(ev, ev.GetType())),
+                    Status = OutboxStatus.Pending
+                });
+            }
+            shift.ClearDomainEvents();
+
             await _context.SaveChangesAsync(ct);
         }
 

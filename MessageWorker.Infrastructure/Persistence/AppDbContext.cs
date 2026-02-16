@@ -1,4 +1,5 @@
-﻿using MessageWorker.Infrastructure.Persistence.Entities;
+﻿using MessageWorker.Domain.Entities;
+using MessageWorker.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
@@ -10,6 +11,7 @@ namespace MessageWorker.Infrastructure.Persistence
     public class AppDbContext : DbContext
     {
         public DbSet<ShiftEntity> Shifts => Set<ShiftEntity>();
+        public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -48,6 +50,33 @@ namespace MessageWorker.Infrastructure.Persistence
                 entity.Property(x => x.CreatedAt).HasConversion(utc);
                 entity.Property(x => x.EndTime).HasConversion(nullableUtc);
                 entity.Property(x => x.UpdatedAt).HasConversion(nullableUtc);
+            });
+
+            modelBuilder.Entity<OutboxMessage>(b =>
+            {
+                b.ToTable("outbox_messages");
+                b.HasKey(x => x.Id);
+
+                b.Property(x => x.Id).HasColumnName("id");
+
+                b.Property(x => x.OccurredOnUtc).HasColumnName("occurred_on_utc");
+                b.Property(x => x.CreatedOnUtc).HasColumnName("created_on_utc");
+
+                b.Property(x => x.Type).HasColumnName("type").HasMaxLength(200);
+                b.Property(x => x.Payload).HasColumnName("payload").HasColumnType("jsonb");
+
+                b.Property(x => x.Status).HasColumnName("status").HasConversion<int>();
+
+                b.Property(x => x.LockedBy).HasColumnName("locked_by").HasMaxLength(200);
+                b.Property(x => x.LockUntilUtc).HasColumnName("lock_until_utc");
+
+                b.Property(x => x.TryCount).HasColumnName("try_count");
+                b.Property(x => x.LastError).HasColumnName("last_error");
+
+                b.Property(x => x.ProcessedOnUtc).HasColumnName("processed_on_utc");
+
+                b.HasIndex(x => new { x.Status, x.LockUntilUtc, x.CreatedOnUtc });
+                b.HasIndex(x => x.ProcessedOnUtc);
             });
         }
 
