@@ -70,7 +70,6 @@ namespace MessageWorker.Workers
                         msg.TryCount++;
                         msg.LastError = ex.Message;
 
-                        // retry için Pending’e geri al (istersen backoff için LockUntilUtc ile geciktir)
                         msg.Status = msg.TryCount >= 20 ? OutboxStatus.Failed : OutboxStatus.Pending;
                         msg.LockedBy = null;
                         msg.LockUntilUtc = null;
